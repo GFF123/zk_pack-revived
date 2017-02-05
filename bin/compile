@@ -35,6 +35,7 @@ mkdir -p $CACHE_DIR/.tools/{wget,debootstrap}
 
 export PATH=/sbin:/usr/sbin:$PATH:$CACHE_DIR/.tools/wget/bin:$CACHE_DIR/.tools/debootstrap/usr/sbin:$BUILD_DIR/.tools/fakechroot/sbin:$BUILD_DIR/.tools/fakechroot/bin
 export DEBOOTSTRAP_DIR=$CACHE_DIR/.tools/debootstrap/usr/share/debootstrap
+export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:$BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu
 
 echo "-----> Fetching and installing wget"
 cd $WGET_BUILD
@@ -70,10 +71,10 @@ echo "fakechroot vendored" | indent
 
 
 
-echo "-----> Bootstraping a new base ubuntu lucid into /app/.root/"
+echo "-----> Bootstraping a new base ubuntu trusty into /app/.root/"
 mkdir -p $BUILD_DIR/.root
 
-fakeroot fakechroot debootstrap --no-check-gpg --arch=amd64 --verbose --variant=fakechroot --foreign --include=apt precise $BUILD_DIR/.root http://archive.ubuntu.com/ubuntu/
+fakeroot fakechroot debootstrap --no-check-gpg --arch=amd64 --verbose --variant=fakechroot --foreign --include=apt trusty $BUILD_DIR/.root http://archive.ubuntu.com/ubuntu/
 
 
 cd $BUILD_DIR/.root
