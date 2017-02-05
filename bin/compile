@@ -36,6 +36,7 @@ mkdir -p $CACHE_DIR/.tools/{wget,debootstrap}
 export PATH=/sbin:/usr/sbin:$PATH:$CACHE_DIR/.tools/wget/bin:$CACHE_DIR/.tools/debootstrap/usr/sbin:$BUILD_DIR/.tools/fakechroot/sbin:$BUILD_DIR/.tools/fakechroot/bin
 export DEBOOTSTRAP_DIR=$CACHE_DIR/.tools/debootstrap/usr/share/debootstrap
 export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:$BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu
+export LFAKEPATH=$BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu
 
 echo "-----> Fetching and installing wget"
 cd $WGET_BUILD
@@ -74,13 +75,13 @@ echo "fakechroot vendored" | indent
 echo "-----> Bootstraping a new base ubuntu trusty into /app/.root/"
 mkdir -p $BUILD_DIR/.root
 
-fakeroot fakechroot debootstrap --no-check-gpg --arch=amd64 --verbose --variant=fakechroot --foreign --include=apt trusty $BUILD_DIR/.root http://archive.ubuntu.com/ubuntu/
+fakeroot -l $LFAKEPATH fakechroot debootstrap --no-check-gpg --arch=amd64 --verbose --variant=fakechroot --foreign --include=apt trusty $BUILD_DIR/.root http://archive.ubuntu.com/ubuntu/
 
 
 cd $BUILD_DIR/.root
 
 wget http://es.archive.ubuntu.com/ubuntu/pool/main/u/ubuntu-keyring/ubuntu-keyring_2011.11.21.1_all.deb
-fakeroot fakechroot chroot $BUILD_DIR/.root dpkg -i ubuntu-keyring_2011.11.21.1_all.deb
+fakeroot -l $LFAKEPATH fakechroot chroot $BUILD_DIR/.root dpkg -i ubuntu-keyring_2011.11.21.1_all.deb
 
 wget https://launchpad.net/~ubuntu-security/+archive/ubuntu/ppa/+build/7011845/+files/multiarch-support_2.15-0ubuntu10.11_amd64.deb
 
@@ -101,21 +102,21 @@ wget http://ftp.es.debian.org/debian/pool/main/r/readline6/libreadline6_6.3-8+b3
 wget http://ftp.es.debian.org/debian/pool/main/x/xz-utils/liblzma5_5.1.1alpha+20120614-2+b3_amd64.deb
 
 
-fakeroot fakechroot chroot $BUILD_DIR/.root dpkg -i --force-all *.deb
+fakeroot -l $LFAKEPATH fakechroot chroot $BUILD_DIR/.root dpkg -i --force-all *.deb
 
 wget http://launchpadlibrarian.net/85594007/gnupg_1.4.11-3ubuntu2_amd64.deb
-fakeroot fakechroot chroot $BUILD_DIR/.root dpkg -i gnupg_1.4.11-3ubuntu2_amd64.deb
+fakeroot -l $LFAKEPATH fakechroot chroot $BUILD_DIR/.root dpkg -i gnupg_1.4.11-3ubuntu2_amd64.deb
 
 
 
 wget http://launchpadlibrarian.net/102675854/libapt-pkg4.12_0.8.16~exp12ubuntu10_amd64.deb
-fakeroot fakechroot chroot $BUILD_DIR/.root dpkg -i libapt-pkg4.12_0.8.16~exp12ubuntu10_amd64.deb
+fakeroot -l $LFAKEPATH fakechroot chroot $BUILD_DIR/.root dpkg -i libapt-pkg4.12_0.8.16~exp12ubuntu10_amd64.deb
  
 
 
 wget http://launchpadlibrarian.net/102675856/apt_0.8.16~exp12ubuntu10_amd64.deb
 
-fakeroot fakechroot chroot $BUILD_DIR/.root dpkg -i apt_0.8.16~exp12ubuntu10_amd64.deb
+fakeroot -l $LFAKEPATH fakechroot chroot $BUILD_DIR/.root dpkg -i apt_0.8.16~exp12ubuntu10_amd64.deb
 
 
 
