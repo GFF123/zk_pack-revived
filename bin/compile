@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir>
+
+# fail fast
+set -e
+
+
+
+mktmpdir() {
+  dir=$(mktemp -t fakesu-$1-XXXX)
+  rm -rf $dir
+  mkdir -p $dir
+  echo $dir
+}
+
+function indent() {
+  c='s/^/       /'
+  case $(uname) in
+    Darwin) sed -l "$c";;
+    *)      sed -u "$c";;
+  esac
+}
+
+BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
+BUILD_DIR=$1
+CACHE_DIR=$2
+
+WGET_BUILD="$(mktmpdir wget)"
+DEBOOTSTRAP_BUILD="$(mktmpdir debootstrap)"
+FAKECHROOT_BUILD="$(mktmpdir fakechroot)"
+DEFAULT_DEB_PACKAGES="aptitude git-core"
+
+mkdir -p $BUILD_DIR/.tools/fakechroot
+mkdir -p $CACHE_DIR/.tools/{wget,debootstrap}
+
+export PATH=/sbin:/usr/sbin:$PATH:$CACHE_DIR/.tools/wget/bin:$CACHE_DIR/.tools/debootstrap/usr/sbin:$BUILD_DIR/.tools/fakechroot/sbin:$BUILD_DIR/.tools/fakechroot/bin
+export DEBOOTSTRAP_DIR=$CACHE_DIR/.tools/debootstrap/usr/share/debootstrap
+
+echo "-----> Fetching and installing wget"
+cd $WGET_BUILD
+curl -O http://ftp.gnu.org/gnu/wget/wget-1.16.3.tar.gz
+tar -xvzf wget-1.16.3.tar.gz
+cd wget-1.16.3
+./configure --prefix=$CACHE_DIR/.tools/wget --without-ssl
+make
+make install
+echo "wget installed" | indent
+
+echo "-----> Fetching and installing debootstrap"
+cd $DEBOOTSTRAP_BUILD
+wget http://pkgs.fedoraproject.org/repo/pkgs/debootstrap/debootstrap_1.0.72.tar.gz/0cacf6e3bd8b566e921d2a326d6fd2bd/debootstrap_1.0.72.tar.gz
+tar zxvf debootstrap_1.0.72.tar.gz
+cd debootstrap-1.0.72
+DESTDIR=$CACHE_DIR/.tools/debootstrap fakeroot make
+DESTDIR=$CACHE_DIR/.tools/debootstrap fakeroot make install
+echo "debootstrap installed" | indent
+
+
+
+echo "-----> Fetching, installing and vendoring fakechroot into /app/.tools/fakechroot/"
+cd $FAKECHROOT_BUILD
+git clone git://github.com/fabiokung/fakechroot.git >/dev/null
+cd fakechroot
+./autogen.sh >/dev/null 2>&1
+./configure --prefix=$BUILD_DIR/.tools/fakechroot >/dev/null
+make >/dev/null
+make install >/dev/null
+echo "fakechroot vendored" | indent
+
+
+
+
+echo "-----> Bootstraping a new base ubuntu lucid into /app/.root/"
+mkdir -p $BUILD_DIR/.root
+
+fakeroot fakechroot debootstrap --no-check-gpg --arch=amd64 --verbose --variant=fakechroot --foreign --include=apt precise $BUILD_DIR/.root http://archive.ubuntu.com/ubuntu/
+
+
+cd $BUILD_DIR/.root
+
+wget http://es.archive.ubuntu.com/ubuntu/pool/main/u/ubuntu-keyring/ubuntu-keyring_2011.11.21.1_all.deb
+fakeroot fakechroot chroot $BUILD_DIR/.root dpkg -i ubuntu-keyring_2011.11.21.1_all.deb
+
+wget https://launchpad.net/~ubuntu-security/+archive/ubuntu/ppa/+build/7011845/+files/multiarch-support_2.15-0ubuntu10.11_amd64.deb
+
+wget http://ftp.es.debian.org/debian/pool/main/g/gcc-4.9/libgcc1_4.9.2-10_amd64.deb
+
+wget http://ftp.us.debian.org/debian/pool/main/g/glibc/libc6_2.19-18+deb8u7_amd64.deb
+
+wget http://ftp.es.debian.org/debian/pool/main/g/gcc-4.9/libstdc++6_4.9.2-10_amd64.deb
+
+wget http://es.archive.ubuntu.com/ubuntu/pool/main/r/readline6/libreadline6_6.2-8_amd64.deb
+wget http://es.archive.ubuntu.com/ubuntu/pool/main/n/ncurses/libtinfo5_5.9-4_amd64.deb
+wget http://es.archive.ubuntu.com/ubuntu/pool/main/r/readline6/readline-common_6.2-8_all.deb
+wget http://es.archive.ubuntu.com/ubuntu/pool/main/libu/libusb/libusb-0.1-4_0.1.12-20_amd64.deb
+wget http://es.archive.ubuntu.com/ubuntu/pool/main/z/zlib/zlib1g_1.2.3.4.dfsg-3ubuntu4_amd64.deb
+wget http://es.archive.ubuntu.com/ubuntu/pool/main/b/bzip2/libbz2-1.0_1.0.6-1_amd64.deb
+wget https://github.com/GFF123/fakesu-fixed/raw/master/gpgv_1.4.18-7_amd64.deb
+wget http://ftp.es.debian.org/debian/pool/main/r/readline6/libreadline6_6.3-8+b3_amd64.deb
+wget http://ftp.es.debian.org/debian/pool/main/x/xz-utils/liblzma5_5.1.1alpha+20120614-2+b3_amd64.deb
+
+
+fakeroot fakechroot chroot $BUILD_DIR/.root dpkg -i --force-all *.deb
+
+wget http://launchpadlibrarian.net/85594007/gnupg_1.4.11-3ubuntu2_amd64.deb
+fakeroot fakechroot chroot $BUILD_DIR/.root dpkg -i gnupg_1.4.11-3ubuntu2_amd64.deb
+
+
+
+wget http://launchpadlibrarian.net/102675854/libapt-pkg4.12_0.8.16~exp12ubuntu10_amd64.deb
+fakeroot fakechroot chroot $BUILD_DIR/.root dpkg -i libapt-pkg4.12_0.8.16~exp12ubuntu10_amd64.deb
+ 
+
+
+wget http://launchpadlibrarian.net/102675856/apt_0.8.16~exp12ubuntu10_amd64.deb
+
+fakeroot fakechroot chroot $BUILD_DIR/.root dpkg -i apt_0.8.16~exp12ubuntu10_amd64.deb
+
+
+
+
+
+cd ..
+
+
+cd $BUILD_DIR/.root
+
