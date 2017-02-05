@@ -36,7 +36,7 @@ mkdir -p $CACHE_DIR/.tools/{wget,debootstrap}
 export PATH=/sbin:/usr/sbin:$PATH:$CACHE_DIR/.tools/wget/bin:$CACHE_DIR/.tools/debootstrap/usr/sbin:$BUILD_DIR/.tools/fakechroot/sbin:$BUILD_DIR/.tools/fakechroot/bin
 export DEBOOTSTRAP_DIR=$CACHE_DIR/.tools/debootstrap/usr/share/debootstrap
 export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:$BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu
-export LFAKEPATH=$BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu
+export LFAKEPATH=$BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/fakechroot
 
 echo "-----> Fetching and installing wget"
 cd $WGET_BUILD
