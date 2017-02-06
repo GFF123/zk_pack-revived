@@ -80,18 +80,18 @@ fakeroot fakechroot -l $LFAKEPATH debootstrap --no-check-gpg --arch=amd64 --verb
 
 cd $BUILD_DIR/.root
 
-wget http://es.archive.ubuntu.com/ubuntu/pool/main/u/ubuntu-keyring/ubuntu-keyring_2011.11.21.1_all.deb
-fakeroot fakechroot -l $LFAKEPATH chroot $BUILD_DIR/.root dpkg -i ubuntu-keyring_2011.11.21.1_all.deb
+wget http://mirrors.kernel.org/ubuntu/pool/main/u/ubuntu-keyring/ubuntu-keyring_2012.05.19_all.deb
+fakeroot fakechroot -l $LFAKEPATH chroot $BUILD_DIR/.root dpkg -i ubuntu-keyring_2012.05.19_all.deb
 
-wget https://launchpad.net/~ubuntu-security/+archive/ubuntu/ppa/+build/7011845/+files/multiarch-support_2.15-0ubuntu10.11_amd64.deb
+wget http://mirrors.kernel.org/ubuntu/pool/main/e/eglibc/multiarch-support_2.19-0ubuntu6.9_amd64.deb
 
-wget http://ftp.es.debian.org/debian/pool/main/g/gcc-4.9/libgcc1_4.9.2-10_amd64.deb
+wget http://security.ubuntu.com/ubuntu/pool/main/g/gcc-4.8/libgcc-4.8-dev_4.8.4-2ubuntu1~14.04.3_amd64.deb
 
-wget http://ftp.us.debian.org/debian/pool/main/g/glibc/libc6_2.19-18+deb8u7_amd64.deb
+wget http://security.ubuntu.com/ubuntu/pool/main/e/eglibc/libc6_2.19-0ubuntu6.9_amd64.deb
 
-wget http://ftp.es.debian.org/debian/pool/main/g/gcc-4.9/libstdc++6_4.9.2-10_amd64.deb
+wget http://security.ubuntu.com/ubuntu/pool/main/g/gcc-4.8/libstdc++6_4.8.4-2ubuntu1~14.04.3_amd64.deb
 
-wget http://es.archive.ubuntu.com/ubuntu/pool/main/r/readline6/libreadline6_6.2-8_amd64.deb
+wget http://mirrors.kernel.org/ubuntu/pool/main/r/readline6/libreadline-dev_6.3-4ubuntu2_amd64.deb
 wget http://es.archive.ubuntu.com/ubuntu/pool/main/n/ncurses/libtinfo5_5.9-4_amd64.deb
 wget http://es.archive.ubuntu.com/ubuntu/pool/main/r/readline6/readline-common_6.2-8_all.deb
 wget http://es.archive.ubuntu.com/ubuntu/pool/main/libu/libusb/libusb-0.1-4_0.1.12-20_amd64.deb
