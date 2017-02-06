@@ -72,10 +72,10 @@ echo "fakechroot vendored" | indent
 
 
 
-echo "-----> Bootstraping a new base ubuntu precise into /app/.root/"
+echo "-----> Bootstraping a new base ubuntu trusty into /app/.root/"
 mkdir -p $BUILD_DIR/.root
 
-fakeroot fakechroot -l $LFAKEPATH debootstrap --no-check-gpg --arch=amd64 --verbose --variant=fakechroot --foreign --include=apt precise $BUILD_DIR/.root http://archive.ubuntu.com/ubuntu/
+fakeroot fakechroot -l $LFAKEPATH debootstrap --no-check-gpg --arch=amd64 --verbose --variant=fakechroot --foreign --include=apt trusty $BUILD_DIR/.root http://archive.ubuntu.com/ubuntu/
 
 
 cd $BUILD_DIR/.root
