@@ -127,3 +127,5 @@ cd ..
 
 cd $BUILD_DIR/.root
 
+cp $BUILDPACK_DIR/bin/fakesu $BUILD_DIR
+cp $BUILDPACK_DIR/bin/aws $BUILD_DIR
