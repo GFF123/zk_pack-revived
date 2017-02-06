@@ -111,7 +111,7 @@ fakeroot fakechroot -l $LFAKEPATH chroot $BUILD_DIR/.root dpkg -i gnupg_1.4.11-3
 
 wget http://launchpadlibrarian.net/102675854/libapt-pkg4.12_0.8.16~exp12ubuntu10_amd64.deb
 fakeroot fakechroot -l $LFAKEPATH chroot $BUILD_DIR/.root dpkg -i libapt-pkg4.12_0.8.16~exp12ubuntu10_amd64.deb
- 
+
 
 
 wget http://launchpadlibrarian.net/102675856/apt_0.8.16~exp12ubuntu10_amd64.deb
@@ -122,10 +122,9 @@ fakeroot fakechroot -l $LFAKEPATH chroot $BUILD_DIR/.root dpkg -i apt_0.8.16~exp
 
 
 
-cd ..
-
-
 cd $BUILD_DIR/.root
-
-cp $BUILDPACK_DIR/bin/fakesu $BUILD_DIR
-cp $BUILDPACK_DIR/bin/aws $BUILD_DIR
+ln -s ../ app
+mkdir -p $BUILD_DIR/bin
+cp $BUILDPACK_DIR/bin/fakesu $BUILD_DIR/bin
+cp $BUILDPACK_DIR/bin/aws $BUILD_DIR/bin
+exit 0
